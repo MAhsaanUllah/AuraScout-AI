@@ -1,11 +1,17 @@
-# AuraScout-AI
+<div align="center">
+  <img src="assets/banner.png" alt="AuraScout AI Banner" width="100%" />
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now-success?style=for-the-badge)](https://mahsaanullah.github.io/AuraScout-AI/frontend/)
+  <br />
+  
+  [![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now-success?style=for-the-badge)](https://mahsaanullah.github.io/AuraScout-AI/frontend/)
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)
-![Gemini AI](https://img.shields.io/badge/Powered%20By-Google%20Gemini-4285F4.svg?logo=google&logoColor=white)
-![Security](https://img.shields.io/badge/Security-Strict%20Sanitization-success.svg)
+  <br />
+
+  ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)
+  ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)
+  ![Gemini AI](https://img.shields.io/badge/Powered%20By-Google%20Gemini-4285F4.svg?logo=google&logoColor=white)
+  ![Security](https://img.shields.io/badge/Security-Strict%20Sanitization-success.svg)
+</div>
 
 ## 📖 Overview
 
