@@ -5,10 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AuraScout AI</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        h1 { margin-top: 0; color: #4285F4; }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Glassmorphism layout here -->
+    <div id="app" class="glass-panel">
+        <h1>🌟 AuraScout AI</h1>
+        <p>Your Automated Intelligence & Lead Scouting Platform</p>
+        <p style="color: #28a745; font-size: 0.9em;">System is Online.</p>
+        
+        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border-bottom: 1px solid #555; padding: 8px;">Company</th>
+                    <th style="border-bottom: 1px solid #555; padding: 8px;">Industry</th>
+                    <th style="border-bottom: 1px solid #555; padding: 8px;">Contact</th>
+                </tr>
+            </thead>
+            <tbody id="saved-hub-body">
+                <!-- Data will be populated here by app.js -->
+            </tbody>
+        </table>
     </div>
     <script src="app.js"></script>
 </body>
