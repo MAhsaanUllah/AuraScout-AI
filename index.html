@@ -3,50 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraScout AI</title>
+    <title>AuraScout AI | Intelligence Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-        }
-        h1 { margin-top: 0; color: #4285F4; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div id="app" class="glass-panel">
-        <h1>🌟 AuraScout AI</h1>
-        <p>Your Automated Intelligence & Lead Scouting Platform</p>
-        <p style="color: #28a745; font-size: 0.9em;">System is Online.</p>
-        
-        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    <th style="border-bottom: 1px solid #555; padding: 8px;">Company</th>
-                    <th style="border-bottom: 1px solid #555; padding: 8px;">Industry</th>
-                    <th style="border-bottom: 1px solid #555; padding: 8px;">Contact</th>
-                </tr>
-            </thead>
-            <tbody id="saved-hub-body">
-                <!-- Data will be populated here by app.js -->
-            </tbody>
-        </table>
+    <!-- Background Gradient Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-satellite-dish"></i> AuraScout AI
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active"><i class="fa-solid fa-radar"></i> Live Scout</a>
+                <a href="#"><i class="fa-solid fa-database"></i> Intelligence Hub</a>
+                <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+            <div class="terminal-box" id="terminal">
+                <div class="terminal-header">System Terminal</div>
+                <div class="terminal-content" id="terminal-output">
+                    > System Initialized.<br>
+                    > AI Engines Online.<br>
+                    > Awaiting directives...
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Enter target parameters or natural language query...">
+                    <button class="btn-glow" onclick="executeScout()">Initiate Scout</button>
+                </div>
+                <div class="profile-area">
+                    <span class="status-indicator"></span> System Active
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Scout Report Card (Collapses on search) -->
+                <section id="scout-report-card" class="glass-panel report-card">
+                    <h2><i class="fa-solid fa-bolt"></i> Ready for Extraction</h2>
+                    <p>Enter a query above to deploy the Serper heuristic engine and Firecrawl API. Data will be parsed via Gemini AI and presented below.</p>
+                </section>
+
+                <!-- Saved Intelligence Hub -->
+                <section class="glass-panel hub-section">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-table-list"></i> Saved Intelligence Hub</h2>
+                        <button class="btn-secondary" onclick="clearHistory()"><i class="fa-solid fa-trash"></i> Clear</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Entity / Company</th>
+                                    <th>Industry Category</th>
+                                    <th>Contact Data</th>
+                                    <th>Quality Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody id="saved-hub-body">
+                                <!-- Example Placeholder Data -->
+                                <tr>
+                                    <td>TechNova Solutions</td>
+                                    <td>Artificial Intelligence</td>
+                                    <td>+1 (555) 019-8372</td>
+                                    <td><span class="badge badge-high-quality">High Confidence</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Global Retail Corp</td>
+                                    <td>E-Commerce</td>
+                                    <td>contact@globalretail.com</td>
+                                    <td><span class="badge badge-low-quality">Missing Phone</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
