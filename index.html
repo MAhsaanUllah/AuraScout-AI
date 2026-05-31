@@ -3,95 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraScout AI | Intelligence Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>AuraScout AI - Next-Gen B2B Intelligence Engine</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Background Gradient Orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <div class="app-container">
+        <header class="main-header">
+            <h1 class="brand-title">AuraScout AI</h1>
+            <p class="brand-subtitle">Next-Gen B2B Intelligence Engine</p>
+            <button id="byokBtn" class="btn-settings">⚙️ BYOK Keys</button>
+        </header>
 
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar glass-panel">
-            <div class="logo">
-                <i class="fa-solid fa-satellite-dish"></i> AuraScout AI
+        <div class="search-section">
+            <div class="input-wrapper">
+                <input type="text" id="targetInput" placeholder="Enter target parameters, company URL, or natural language query...">
+                <button id="scoutBtn" class="btn-primary">Scout Target ➔</button>
             </div>
-            <nav class="nav-links">
-                <a href="#" class="active"><i class="fa-solid fa-radar"></i> Live Scout</a>
-                <a href="#"><i class="fa-solid fa-database"></i> Intelligence Hub</a>
-                <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
-            </nav>
-            <div class="terminal-box" id="terminal">
-                <div class="terminal-header">System Terminal</div>
-                <div class="terminal-content" id="terminal-output">
-                    > System Initialized.<br>
-                    > AI Engines Online.<br>
-                    > Awaiting directives...
+        </div>
+
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">Agent Logic Stream</span>
+            </div>
+            <div id="agent-terminal" class="terminal-body">
+                <p class="log-system">[System] 🛰️ Awaiting target directives...</p>
+            </div>
+        </div>
+
+        <div id="scout-report-card" class="scout-card" style="display: none;">
+            <div class="card-meta">
+                <span id="execution-time" class="meta-badge">⏱️ Execution Time: 0.0s</span>
+                <span id="tokens-saved" class="meta-badge">🧬 Tokens Saved: 0%</span>
+            </div>
+            <h2 class="card-main-title">Scout Report</h2>
+            <span id="discovery-status-badge" class="status-badge-inline" style="display: none;"></span>
+
+            <div class="card-grid">
+                <div class="grid-item">
+                    <label>🏢 Company Name</label>
+                    <p id="preview-company" class="preview-text">Not Identified</p>
+                </div>
+                <div class="grid-item">
+                    <label>🏭 Industry Sector</label>
+                    <p id="preview-industry" class="preview-text">Not Identified</p>
                 </div>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="search-input" placeholder="Enter target parameters or natural language query...">
-                    <button class="btn-glow" onclick="executeScout()">Initiate Scout</button>
+            <div class="grid-item-full">
+                <label>⚙️ Core Services / Products</label>
+                <div id="preview-services" class="services-badge-container">
+                    <p class="muted-placeholder">No core assets mapped yet.</p>
                 </div>
-                <div class="profile-area">
-                    <span class="status-indicator"></span> System Active
-                </div>
-            </header>
-
-            <div class="content-area">
-                <!-- Scout Report Card (Collapses on search) -->
-                <section id="scout-report-card" class="glass-panel report-card">
-                    <h2><i class="fa-solid fa-bolt"></i> Ready for Extraction</h2>
-                    <p>Enter a query above to deploy the Serper heuristic engine and Firecrawl API. Data will be parsed via Gemini AI and presented below.</p>
-                </section>
-
-                <!-- Saved Intelligence Hub -->
-                <section class="glass-panel hub-section">
-                    <div class="section-header">
-                        <h2><i class="fa-solid fa-table-list"></i> Saved Intelligence Hub</h2>
-                        <button class="btn-secondary" onclick="clearHistory()"><i class="fa-solid fa-trash"></i> Clear</button>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Entity / Company</th>
-                                    <th>Industry Category</th>
-                                    <th>Contact Data</th>
-                                    <th>Quality Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody id="saved-hub-body">
-                                <!-- Example Placeholder Data -->
-                                <tr>
-                                    <td>TechNova Solutions</td>
-                                    <td>Artificial Intelligence</td>
-                                    <td>+1 (555) 019-8372</td>
-                                    <td><span class="badge badge-high-quality">High Confidence</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Global Retail Corp</td>
-                                    <td>E-Commerce</td>
-                                    <td>contact@globalretail.com</td>
-                                    <td><span class="badge badge-low-quality">Missing Phone</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
             </div>
-        </main>
+            <div class="grid-item-full email-box">
+                <label>✉️ Corporate Email</label>
+                <p id="preview-email" class="preview-text">Not Identified</p>
+            </div>
+            
+            <div class="card-actions">
+                <button id="downloadJsonBtn" class="btn-secondary">📥 Download JSON</button>
+                <button id="shareLinkBtn" class="btn-secondary">🔗 Share Link</button>
+            </div>
+        </div>
+
+        <div class="intelligence-hub">
+            <div class="hub-header">
+                <div class="hub-title-wrapper">
+                    <span class="hub-icon">🗄️</span>
+                    <h2>Saved Intelligence Hub</h2>
+                </div>
+                <div class="hub-actions">
+                    <button id="clearHistoryBtn" class="btn-danger">🗑️ Clear History</button>
+                    <button id="exportCsvBtn" class="btn-purple">📊 Bulk Export CSV</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="intel-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Company</th>
+                            <th style="width: 25%;">Industry</th>
+                            <th style="width: 25%;">Contact / Phone</th>
+                            <th style="width: 20%;">Lead Quality</th>
+                        </tr>
+                    </thead>
+                    <tbody id="saved-leads-table-body">
+                        <tr id="empty-placeholder-row">
+                            <td colspan="4" class="table-placeholder">No leads saved yet in the database.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <script src="app.js"></script>
 </body>
 </html>
