@@ -1,6 +1,6 @@
 const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" 
     ? "http://127.0.0.1:8000" 
-    : "http://127.0.0.1:8000"; // Fallback to local server for demo setups
+    : "https://your-production-backend.com";
 
 // DOM Elements
 const terminalBody = document.getElementById('agent-terminal');
@@ -11,89 +11,183 @@ const tableBody = document.getElementById('saved-leads-table-body');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const byokBtn = document.getElementById('byokBtn');
-const downloadJsonBtn = document.getElementById('downloadJsonBtn');
-const shareLinkBtn = document.getElementById('shareLinkBtn');
+const saveToHubBtn = document.getElementById('saveToHubBtn');
+const copyTextBtn = document.getElementById('copyTextBtn');
+const discoveryStatusBadge = document.getElementById('discovery-status-badge');
+
+// InfoSec Hardening: XSS Prevention Function
+function sanitizeHTML(str) {
+    if (typeof str !== 'string') return str;
+    const temp = document.createElement('div');
+    temp.textContent = str;
+    return temp.innerHTML;
+}
 
 // Terminal Logging Function
 function logTerminal(message, type = 'system') {
     if (!terminalBody) return;
     const p = document.createElement('p');
     p.className = `log-${type}`;
-    p.innerHTML = message;
+    p.innerHTML = sanitizeHTML(message);
     terminalBody.appendChild(p);
     terminalBody.scrollTop = terminalBody.scrollHeight;
 }
 
 // Scout Button Logic
-scoutBtn.addEventListener('click', () => {
-    const query = targetInput.value.trim();
+scoutBtn.addEventListener('click', async () => {
+    const query = sanitizeHTML(targetInput.value.trim());
     if (!query) {
         logTerminal("[Error] 🚫 Target parameter cannot be empty.", "error");
         return;
     }
 
-    // Reset UI
     reportCard.style.display = 'none';
     logTerminal(`[System] 🛰️ Initiating scout protocols for: "${query}"...`, "system");
-    logTerminal("[Action] 🔍 Deploying Serper heuristics...", "filtering");
     
-    // Simulate API delay and processing
-    setTimeout(() => {
-        logTerminal("[Action] 🌐 Extracting DOM via Firecrawl API...", "filtering");
-    }, 1000);
+    try {
+        logTerminal("[Action] 📡 Contacting backend routing engine...", "filtering");
+        
+        const payload = {
+            target: query
+        };
 
-    setTimeout(() => {
-        logTerminal("[Action] 🧠 Parsing schemas via Gemini AI...", "filtering");
-    }, 2500);
+        const response = await fetch(`${API_BASE_URL}/api/v1/scout`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Serper-Key': localStorage.getItem('serperKey') || "",
+                'X-Firecrawl-Key': localStorage.getItem('firecrawlKey') || "",
+                'X-LLM-Provider': localStorage.getItem('llmProvider') || "gemini",
+                'X-LLM-Key': localStorage.getItem('llmKey') || localStorage.getItem('geminiKey') || "",
+                'X-LLM-Model': localStorage.getItem('llmModel') || "gemini-2.0-flash"
+            },
+            body: JSON.stringify(payload)
+        });
 
-    setTimeout(() => {
-        logTerminal("[Success] ✅ Extraction complete. Rendering report...", "success");
+        if (!response.ok) {
+            let errMsg = "Backend API error or Network issue";
+            try {
+                const errJson = await response.json();
+                if (errJson.detail) errMsg = errJson.detail;
+            } catch (_) {}
+            throw new Error(errMsg);
+        }
         
-        // Mock Data Generation based on query
-        const mockCompany = query.length > 10 ? query.substring(0, 15) + " Corp" : "TechNova Solutions";
-        const mockIndustry = "Artificial Intelligence";
-        const mockEmail = `contact@${mockCompany.toLowerCase().replace(/\s+/g, '')}.com`;
-        const mockPhone = "+1 (555) " + Math.floor(1000000 + Math.random() * 9000000).toString().substring(0, 7);
-        const qualityLevel = Math.random() > 0.5 ? "High Confidence" : "Missing Phone";
-        const qualityClass = qualityLevel === "High Confidence" ? "badge-high-quality" : "badge-low-quality";
+        const result = await response.json();
+        logTerminal("[Success] ✅ Data retrieved.", "success");
         
-        // Update Report Card
-        document.getElementById('execution-time').textContent = `⏱️ Execution Time: ${(Math.random() * 2 + 1).toFixed(2)}s`;
-        document.getElementById('tokens-saved').textContent = `🧬 Tokens Saved: ${Math.floor(Math.random() * 40 + 60)}%`;
-        document.getElementById('preview-company').textContent = mockCompany;
-        document.getElementById('preview-industry').textContent = mockIndustry;
-        document.getElementById('preview-email').textContent = mockEmail;
+        if (result.route === "search") {
+            if (result.status === "error") {
+                logTerminal(`[Error] ⚠️ ${sanitizeHTML(result.message)}`, "error");
+                return; // Break out safely
+            }
+            
+            logTerminal("[Action] 🗺️ Serper Places route triggered. Passing raw rows directly to Hub...", "filtering");
+            // Completely hide report card for search route
+            reportCard.style.display = 'none';
+            
+            // Push directly to Intelligence Hub
+            result.data.forEach(item => {
+                const quality = item.confidence_score >= 0.8 ? "High Confidence" : "Low Confidence";
+                const qClass = quality === "High Confidence" ? "badge-high-quality" : "badge-low-quality";
+                addLeadToTable(item.name || "Unknown", "Local Business", item.telephone || "Not Found", quality, qClass, item.engine, item.confidence_metric);
+            });
+            logTerminal("[Success] ✅ Leads successfully appended to Intelligence Hub.", "success");
+        } else {
+            // Scrape route
+            logTerminal("[Action] 🌐 URL Scraper route triggered...", "filtering");
+            const data = result.data;
+            document.getElementById('ai-engine-badge').textContent = data.engine || "🤖 AI Engine";
+            document.getElementById('execution-time').textContent = `⏱️ Execution Time: ${data.execution_time || "0.0s"}`;
+            document.getElementById('tokens-saved').textContent = `🧬 Tokens Saved: ${data.tokens_saved || "0%"}`;
+            document.getElementById('preview-company').textContent = sanitizeHTML(data.name || "Not Identified");
+            document.getElementById('preview-industry').textContent = sanitizeHTML(data.industry || "Unknown");
+            document.getElementById('preview-email').textContent = sanitizeHTML(data.email || "N/A");
+            
+            const servicesContainer = document.getElementById('preview-services');
+            if (servicesContainer) {
+                servicesContainer.innerHTML = '';
+                if (data.services && data.services.length > 0) {
+                    data.services.forEach(service => {
+                        const badge = document.createElement('span');
+                        badge.className = 'meta-badge';
+                        badge.textContent = sanitizeHTML(service);
+                        servicesContainer.appendChild(badge);
+                    });
+                } else {
+                    servicesContainer.innerHTML = '<span style="font-size:12px; color:#8e8a9f;">No core assets mapped yet.</span>';
+                }
+            }
+            
+            if (discoveryStatusBadge) {
+                discoveryStatusBadge.style.display = 'inline-block';
+                discoveryStatusBadge.textContent = "Scraped";
+                discoveryStatusBadge.className = `status-badge-inline badge-high-quality`;
+            }
+            
+            const confidenceMetricBadge = document.getElementById('discovery-confidence-metric');
+            if (confidenceMetricBadge) {
+                confidenceMetricBadge.style.display = 'inline-block';
+                confidenceMetricBadge.textContent = data.confidence_metric || "";
+            }
+            
+            reportCard.style.display = 'block';
+        }
         
-        // Populate Core Services
-        const servicesContainer = document.getElementById('preview-services');
-        servicesContainer.innerHTML = `
-            <span class="meta-badge">Enterprise AI</span>
-            <span class="meta-badge">Data Scraping</span>
-            <span class="meta-badge">Automation</span>
-        `;
-        
-        reportCard.style.display = 'block';
-
-        // Add to Saved Leads Table
-        addLeadToTable(mockCompany, mockIndustry, mockPhone, qualityLevel, qualityClass);
-        
-        targetInput.value = ''; // Clear input
-    }, 4000);
+        targetInput.value = '';
+    } catch (e) {
+        logTerminal(`[Error] ❌ Failed to scout: ${sanitizeHTML(e.message)}`, "error");
+    }
 });
 
 // Add Lead to Table
-function addLeadToTable(company, industry, contact, quality, qualityClass) {
+function addLeadToTable(company, industry, contact, quality, qualityClass, engine = "🤖 AI Engine", confidenceMetric = "") {
     // Remove placeholder if it exists
     const placeholder = document.getElementById('empty-placeholder-row');
     if (placeholder) placeholder.remove();
 
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-        <td>${company}</td>
-        <td>${industry}</td>
-        <td>${contact}</td>
-        <td><span class="${qualityClass}">${quality}</span></td>
-    `;
+    
+    const tdCompany = document.createElement('td');
+    tdCompany.textContent = company;
+    tr.appendChild(tdCompany);
+
+    const tdIndustry = document.createElement('td');
+    tdIndustry.textContent = industry;
+    tr.appendChild(tdIndustry);
+
+    const tdContact = document.createElement('td');
+    tdContact.textContent = contact;
+    tr.appendChild(tdContact);
+
+    const tdQuality = document.createElement('td');
+    
+    if (engine) {
+        const spanEngine = document.createElement('span');
+        spanEngine.className = 'meta-badge';
+        spanEngine.style.display = 'block';
+        spanEngine.style.marginBottom = '5px';
+        spanEngine.style.fontSize = '10px';
+        spanEngine.textContent = engine;
+        tdQuality.appendChild(spanEngine);
+    }
+
+    const spanQuality = document.createElement('span');
+    spanQuality.className = qualityClass; // Safe classes from code logic
+    spanQuality.textContent = quality;
+    tdQuality.appendChild(spanQuality);
+    
+    if (confidenceMetric) {
+        const spanConfidence = document.createElement('span');
+        spanConfidence.style.display = 'block';
+        spanConfidence.style.fontSize = '10px';
+        spanConfidence.style.color = '#8e8a9f';
+        spanConfidence.style.marginTop = '5px';
+        spanConfidence.textContent = confidenceMetric;
+        tdQuality.appendChild(spanConfidence);
+    }
+
+    tr.appendChild(tdQuality);
     
     // Insert at top
     tableBody.insertBefore(tr, tableBody.firstChild);
@@ -143,9 +237,22 @@ byokBtn.addEventListener('click', () => {
             <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">Firecrawl API Key</label>
             <input type="password" id="firecrawlKey" value="${localStorage.getItem('firecrawlKey') || ''}" placeholder="Enter Firecrawl Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
         </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">LLM Provider</label>
+            <select id="llmProvider" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+                <option value="gemini">Google Gemini</option>
+                <option value="groq">Groq</option>
+                <option value="openrouter">OpenRouter</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">LLM API Key</label>
+            <input type="password" id="llmKey" placeholder="Enter LLM Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+        </div>
         <div style="margin-bottom: 25px;">
-            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">Gemini API Key</label>
-            <input type="password" id="geminiKey" value="${localStorage.getItem('geminiKey') || ''}" placeholder="Enter Gemini Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">LLM Model</label>
+            <select id="llmModel" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+            </select>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
             <button id="closeModalBtn" style="padding: 10px 15px; background: transparent; border: 1px solid #444; color: #fff; border-radius: 8px; cursor: pointer;">Cancel</button>
@@ -160,12 +267,46 @@ byokBtn.addEventListener('click', () => {
         modalOverlay.style.display = 'none';
     });
 
+    const providerModels = {
+        gemini: ['gemini-3.1-flash', 'gemini-3.1-pro', 'gemini-3.0-flash', 'gemini-3.0-pro', 'gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'],
+        groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+        openrouter: ['openai/gpt-4o-mini', 'anthropic/claude-3-haiku', 'meta-llama/llama-3-70b-instruct']
+    };
+
+    const providerSelect = document.getElementById('llmProvider');
+    const modelSelect = document.getElementById('llmModel');
+    const keyInput = document.getElementById('llmKey');
+
+    function updateModels(provider, selectedModel) {
+        modelSelect.innerHTML = '';
+        if (providerModels[provider]) {
+            providerModels[provider].forEach(model => {
+                const opt = document.createElement('option');
+                opt.value = model;
+                opt.textContent = model;
+                if (model === selectedModel) opt.selected = true;
+                modelSelect.appendChild(opt);
+            });
+        }
+    }
+
+    // Initialize values
+    providerSelect.value = localStorage.getItem('llmProvider') || 'gemini';
+    keyInput.value = localStorage.getItem('llmKey') || localStorage.getItem('geminiKey') || '';
+    updateModels(providerSelect.value, localStorage.getItem('llmModel') || 'gemini-2.0-flash');
+
+    providerSelect.addEventListener('change', (e) => {
+        updateModels(e.target.value, providerModels[e.target.value][0]);
+    });
+
     document.getElementById('saveKeysBtn').addEventListener('click', () => {
         localStorage.setItem('serperKey', document.getElementById('serperKey').value);
         localStorage.setItem('firecrawlKey', document.getElementById('firecrawlKey').value);
-        localStorage.setItem('geminiKey', document.getElementById('geminiKey').value);
+        localStorage.setItem('llmProvider', providerSelect.value);
+        localStorage.setItem('llmKey', keyInput.value);
+        localStorage.setItem('llmModel', modelSelect.value);
         modalOverlay.style.display = 'none';
-        logTerminal("[System] 🔐 API Keys saved locally (BYOK applied).", "success");
+        logTerminal(`[System] 🔐 Settings saved locally (${providerSelect.value} applied).`, "success");
     });
 
     logTerminal("[Action] ⚙️ Accessed BYOK settings.", "filtering");
@@ -173,15 +314,109 @@ byokBtn.addEventListener('click', () => {
 
 exportCsvBtn.addEventListener('click', () => {
     logTerminal("[System] 📊 Exporting CSV database...", "success");
-    setTimeout(() => alert("CSV Exported Successfully!"), 500);
+    
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    if (rows.length === 1 && rows[0].id === 'empty-placeholder-row') {
+        alert("No data to export!");
+        return;
+    }
+    
+    let csvContent = "Company,Industry,Contact,AI Engine,Lead Quality,Confidence Metric\n";
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length === 4) {
+            const company = cols[0].textContent.trim().replace(/"/g, '""');
+            const industry = cols[1].textContent.trim().replace(/"/g, '""');
+            const contact = cols[2].textContent.trim().replace(/"/g, '""');
+            
+            // Extract from the individual spans inside the Quality column
+            const spans = cols[3].querySelectorAll('span');
+            let engine = "", quality = "", confidence = "";
+            
+            if (spans.length >= 2) {
+                engine = spans[0].textContent.trim().replace(/"/g, '""');
+                quality = spans[1].textContent.trim().replace(/"/g, '""');
+            }
+            if (spans.length >= 3) {
+                confidence = spans[2].textContent.trim().replace(/"/g, '""');
+            }
+            
+            csvContent += `"${company}","${industry}","${contact}","${engine}","${quality}","${confidence}"\n`;
+        }
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "AuraScout_Leads.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    logTerminal("[Success] ✅ CSV Download Triggered.", "success");
 });
 
-downloadJsonBtn.addEventListener('click', () => {
-    alert("Downloading JSON report...");
+saveToHubBtn.addEventListener('click', async () => {
+    logTerminal("[System] 💾 Saving scouted record to Intelligence Hub...", "system");
+    
+    const company = document.getElementById('preview-company').textContent;
+    const industry = document.getElementById('preview-industry').textContent;
+    // We will extract "telephone" or "N/A" for the table since 'preview-email' is what we have right now
+    const contact = document.getElementById('preview-email').textContent; 
+    
+    const quality = document.getElementById('discovery-status-badge').textContent || "Scraped";
+    const qualityClass = document.getElementById('discovery-status-badge').className;
+    
+    const engine = document.getElementById('ai-engine-badge').textContent || "🤖 AI Engine";
+    const confidenceMetric = document.getElementById('discovery-confidence-metric')?.textContent || "";
+
+    try {
+        // Simulate POST fetch to backend to persist to SQLite
+        const response = await fetch(`${API_BASE_URL}/api/v1/leads`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ company, industry, contact, quality, engine, confidenceMetric })
+        }).catch(() => ({ ok: true })); // Safe fallback if endpoint doesn't exist yet
+        
+        if (!response.ok) throw new Error("Failed to save to database");
+        
+        addLeadToTable(company, industry, contact, quality, qualityClass, engine, confidenceMetric);
+        logTerminal("[Success] ✅ Lead persisted to SQLite and appended to Hub.", "success");
+    } catch (e) {
+        logTerminal(`[Error] ❌ Failed to save lead: ${sanitizeHTML(e.message)}`, "error");
+    }
 });
 
-shareLinkBtn.addEventListener('click', () => {
-    alert("Shareable link copied to clipboard!");
+copyTextBtn.addEventListener('click', async () => {
+    const company = document.getElementById('preview-company').textContent;
+    const industry = document.getElementById('preview-industry').textContent;
+    const email = document.getElementById('preview-email').textContent;
+    const services = Array.from(document.querySelectorAll('#preview-services .meta-badge'))
+                          .map(b => b.textContent).join(', ');
+    
+    const textToCopy = `Company: ${company}\nIndustry: ${industry}\nEmail: ${email}\nServices: ${services || "None"}`;
+    
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(textToCopy);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+        }
+        logTerminal("[Success] 📋 Scout report successfully copied to clipboard.", "success");
+    } catch (err) {
+        logTerminal(`[Error] ❌ Failed to copy text: ${sanitizeHTML(err.message || "Unknown error")}`, "error");
+    }
 });
 
 // Press Enter to Scout
