@@ -1,0 +1,24 @@
+# Python Virtual Environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables / Credentials
+.env
+*.env
+
+# SQLite and State Tracking
+*.db
+*.sqlite3
+instance/
+.pytest_cache/
+
+# Frontend builds/artifacts & Temp files
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
