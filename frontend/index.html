@@ -35,11 +35,13 @@
 
         <div id="scout-report-card" class="scout-card" style="display: none;">
             <div class="card-meta">
+                <span id="ai-engine-badge" class="meta-badge"></span>
                 <span id="execution-time" class="meta-badge">⏱️ Execution Time: 0.0s</span>
                 <span id="tokens-saved" class="meta-badge">🧬 Tokens Saved: 0%</span>
             </div>
             <h2 class="card-main-title">Scout Report</h2>
             <span id="discovery-status-badge" class="status-badge-inline" style="display: none;"></span>
+            <span id="discovery-confidence-metric" style="display: none; font-size: 11px; color: #8e8a9f; margin-left: 10px;"></span>
 
             <div class="card-grid">
                 <div class="grid-item">
@@ -63,8 +65,8 @@
             </div>
             
             <div class="card-actions">
-                <button id="downloadJsonBtn" class="btn-secondary">📥 Download JSON</button>
-                <button id="shareLinkBtn" class="btn-secondary">🔗 Share Link</button>
+                <button id="saveToHubBtn" class="btn-secondary">💾 Save to Hub</button>
+                <button id="copyTextBtn" class="btn-secondary">📋 Copy as Text</button>
             </div>
         </div>
 
