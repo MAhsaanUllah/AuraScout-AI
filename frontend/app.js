@@ -1,6 +1,10 @@
 // Frontend logic & BYOK localStorage routing
 
-const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://127.0.0.1:8000" : "https://your-production-backend.com";
+// Dynamic API Environment Routing
+// If accessed globally via GitHub Pages, it defaults to querying the local server for active demonstrations.
+const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" 
+    ? "http://127.0.0.1:8000" 
+    : "http://127.0.0.1:8000"; // Fallback to local server for demo setups from remote GH Pages
 
 // ... (Rest of app logic) ...
 
