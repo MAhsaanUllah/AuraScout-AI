@@ -1,87 +1,72 @@
-# 🌟 AuraScout AI
+# AuraScout-AI
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)
 ![Gemini AI](https://img.shields.io/badge/Powered%20By-Google%20Gemini-4285F4.svg?logo=google&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-Strict%20Sanitization-success.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**AuraScout AI** is an advanced, automated intelligence-gathering and lead-scouting platform. It leverages the power of modern search heuristics, web scraping, and generative AI to extract, parse, and organize high-value data into a sleek, real-time matrix dashboard.
+## 📖 Overview
 
----
+AuraScout-AI is a high-performance, automated intelligence-gathering and lead-scouting platform. Engineered to eliminate manual research overhead, the system integrates advanced search heuristics, distributed web extraction, and generative AI schema parsing to organize unstructured web data into a deterministic, real-time matrix dashboard.
 
-## 🚀 What is AuraScout AI?
+## 🚀 Architecture and Core Modules
 
-AuraScout AI acts as your automated research assistant. Instead of manually searching the web for businesses, contacts, or industry specific information, AuraScout automates the entire pipeline:
-1. **Discover**: Uses Serper API (Places heuristic) to find relevant targets based on natural language queries.
-2. **Scrape**: Integrates with the Firecrawl API to extract rich markdown data directly from targeted websites.
-3. **Analyze**: Routes raw data through Google Gemini AI for intelligent schema parsing and sentiment/quality analysis.
-4. **Present**: Displays the structured intelligence in a stunning, interactive Glassmorphism frontend interface.
+The architecture is strictly modularized to enforce separation of concerns between data extraction, AI parsing, and user interface rendering.
 
-## ✨ Key Features
-
-- **🧠 Intelligent Discovery Engine**: Natural language processing to convert your queries into targeted search parameters.
-- **🕸️ Automated Web Extraction**: Seamlessly scrape target domains for relevant context without manual copying.
-- **🤖 LLM Schema Parsing**: Uses Gemini AI to force structured JSON extraction (Company, Industry, Contacts, Quality Score) from chaotic web data.
-- **🛡️ DevSecOps & Security First**: 
-  - Strict DOM sanitization to prevent XSS (Cross-Site Scripting) attacks.
-  - Isolated environment mapping and untracked local runtime databases.
-- **📊 Saved Intelligence Hub**: A responsive, dynamic data matrix that saves your successful scouts locally.
-- **🎨 Glassmorphism UI**: A premium, modern, and highly responsive user interface with intuitive badges and layouts.
-
-## 🏗️ Architecture Stack
-
-### Backend (Python)
-- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) for hyper-fast, asynchronous API routing.
-- **AI Integration**: `google-genai` for advanced reasoning and schema extraction.
-- **Networking**: `httpx` for efficient, non-blocking asynchronous HTTP requests.
-- **Data Validation**: `pydantic` for strict typing and payload validation.
-
-### Frontend (Vanilla JS & CSS)
-- **Design System**: Custom CSS with Glassmorphism effects, dynamic badges, and responsive tables.
-- **Logic**: Pure Javascript (`app.js`) handling local storage routing (BYOK - Bring Your Own Key) and DOM rendering without heavy frontend frameworks.
-
-## 📂 Project Structure
+### Workspace Blueprint
 
 ```text
 aurascout-ai/
+├── config/
+│   ├── __init__.py
+│   └── settings.py          # Environment keys & configuration management
 ├── core/
-│   ├── database.py       # SQLite connection mapping
-│   ├── discovery.py      # Serper /places brain heuristic (Fault-tolerant)
-│   ├── extractor.py      # Gemini response_schema parsing
-│   └── scraper.py        # Firecrawl markdown logic
+│   ├── __init__.py
+│   ├── database.py          # SQLite connection and session management
+│   ├── discovery.py         # Serper heuristic engine (Fault-tolerant batching)
+│   ├── extractor.py         # Gemini AI strict response_schema parsing
+│   ├── models.py            # Data modeling layer
+│   └── scraper.py           # Firecrawl markdown integration
 ├── frontend/
-│   ├── index.html        # Main static UI (Glassmorphism layout)
-│   ├── app.js            # Frontend logic & secure DOM rendering
-│   └── style.css         # Styling, terminal & badge rules
-├── main.py               # FastAPI entry point & routers
-├── requirements.txt      # Production dependencies
-└── .gitignore            # Security Gatekeeper
+│   ├── index.html           # Main static UI (Glassmorphism layout)
+│   ├── app.js               # Frontend logic & secure DOM rendering (BYOK routing)
+│   └── style.css            # Responsive matrix styling & badge rules
+├── schemas/
+│   └── lead.py              # Pydantic schemas for data validation
+├── .gitignore               # Strict security & caching gatekeeper
+├── main.py                  # FastAPI entry point & API routers
+└── requirements.txt         # Pinned production dependencies
 ```
 
-## ⚙️ Getting Started
+## 🔐 DevSecOps & Security Implementations
 
-### 1. Clone & Setup
+- **Strict DOM Sanitization**: Direct mapping of external payloads using text node assignments (`.textContent`) to neutralize Cross-Site Scripting (XSS) vectors.
+- **Isolated Runtimes**: Local SQLite binaries, `__pycache__`, environment keys (`.env`), and python virtual environments are completely disconnected from source tracking.
+- **Graceful Fault Tolerance**: High-coverage try-except mapping boundaries ensure malformed upstream payloads safely degrade without compromising batch concurrent loop execution.
+
+## ⚙️ Installation & Deployment
+
+### 1. Repository Clone
 ```bash
-git clone https://github.com/yourusername/aurascout-ai.git
-cd aurascout-ai
+git clone https://github.com/MAhsaanUllah/AuraScout-AI.git
+cd AuraScout-AI
+```
+
+### 2. Environment Configuration
+Initialize a secure Python virtual environment and pull production dependencies:
+```bash
 python -m venv venv
-```
-
-### 2. Activate Virtual Environment
-- **Windows**: `venv\Scripts\activate`
-- **Mac/Linux**: `source venv/bin/activate`
-
-### 3. Install Dependencies
-```bash
+# Windows: venv\Scripts\activate
+# Unix: source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the Server
+### 3. Initialize Engine
+Execute the FastAPI router:
 ```bash
 uvicorn main:app --reload
 ```
-Navigate to `http://127.0.0.1:8000` to start scouting!
+Navigate to `http://127.0.0.1:8000` to interact with the frontend client.
 
 ---
-*Built for precision. Engineered for security.*
+*Engineered for precision. Built for scale.*
