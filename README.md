@@ -3,7 +3,7 @@
 
   <br />
   
-  [![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now-success?style=for-the-badge)](https://mahsaanullah.github.io/AuraScout-AI/frontend/)
+  [![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now-success?style=for-the-badge)](https://mahsaanullah.github.io/AuraScout-AI/)
 
   <br />
 
