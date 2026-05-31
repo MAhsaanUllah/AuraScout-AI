@@ -1,5 +1,7 @@
 # AuraScout-AI
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Play_Now-success?style=for-the-badge)](https://mahsaanullah.github.io/AuraScout-AI/frontend/)
+
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi&logoColor=white)
 ![Gemini AI](https://img.shields.io/badge/Powered%20By-Google%20Gemini-4285F4.svg?logo=google&logoColor=white)
@@ -10,10 +12,10 @@
 AuraScout-AI is a high-performance, automated intelligence-gathering and lead-scouting platform. Engineered to eliminate manual research overhead, the system integrates advanced search heuristics, distributed web extraction, and generative AI schema parsing to organize unstructured web data into a deterministic, real-time matrix dashboard.
 
 ### 🖼️ System Previews
-<div align="center">
-  <img src="frontend/screenshots/QA1.png" width="45%" alt="AuraScout QA1 Output" />
-  <img src="frontend/screenshots/QA2.png" width="45%" alt="AuraScout QA2 Output" />
-</div>
+
+![AuraScout QA1 Output](frontend/screenshots/QA1.png)
+
+![AuraScout QA2 Output](frontend/screenshots/QA2.png)
 
 ## ✨ Key Features
 - **BYOK (Bring Your Own Key)**: API credentials are saved locally in the browser (`localStorage`) for ultimate privacy.
