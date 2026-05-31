@@ -110,9 +110,64 @@ clearHistoryBtn.addEventListener('click', () => {
     reportCard.style.display = 'none';
 });
 
-// Mock Action Buttons
+// BYOK Keys Modal Logic (3 API Keys: Serper, Firecrawl, Gemini)
 byokBtn.addEventListener('click', () => {
-    alert("BYOK Keys settings modal will open here.");
+    // Check if modal already exists
+    if (document.getElementById('byok-modal')) {
+        document.getElementById('byok-modal').style.display = 'flex';
+        return;
+    }
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.id = 'byok-modal';
+    modalOverlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+        display: flex; align-items: center; justify-content: center; z-index: 1000;
+    `;
+
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: var(--glass-bg, #191628); border: 1px solid var(--glass-border, #333);
+        padding: 30px; border-radius: 16px; width: 400px; max-width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: #fff;
+    `;
+
+    modalContent.innerHTML = `
+        <h2 style="margin-bottom: 20px; font-size: 1.5rem;">⚙️ Configure API Keys</h2>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">Serper API Key</label>
+            <input type="password" id="serperKey" value="${localStorage.getItem('serperKey') || ''}" placeholder="Enter Serper Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">Firecrawl API Key</label>
+            <input type="password" id="firecrawlKey" value="${localStorage.getItem('firecrawlKey') || ''}" placeholder="Enter Firecrawl Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+        </div>
+        <div style="margin-bottom: 25px;">
+            <label style="font-size: 12px; color: #8e8a9f; display: block; margin-bottom: 5px;">Gemini API Key</label>
+            <input type="password" id="geminiKey" value="${localStorage.getItem('geminiKey') || ''}" placeholder="Enter Gemini Key" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff;">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="closeModalBtn" style="padding: 10px 15px; background: transparent; border: 1px solid #444; color: #fff; border-radius: 8px; cursor: pointer;">Cancel</button>
+            <button id="saveKeysBtn" style="padding: 10px 15px; background: #6366f1; border: none; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold;">Save Keys</button>
+        </div>
+    `;
+
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+    });
+
+    document.getElementById('saveKeysBtn').addEventListener('click', () => {
+        localStorage.setItem('serperKey', document.getElementById('serperKey').value);
+        localStorage.setItem('firecrawlKey', document.getElementById('firecrawlKey').value);
+        localStorage.setItem('geminiKey', document.getElementById('geminiKey').value);
+        modalOverlay.style.display = 'none';
+        logTerminal("[System] 🔐 API Keys saved locally (BYOK applied).", "success");
+    });
+
     logTerminal("[Action] ⚙️ Accessed BYOK settings.", "filtering");
 });
 
