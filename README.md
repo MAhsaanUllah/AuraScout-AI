@@ -9,6 +9,18 @@
 
 AuraScout-AI is a high-performance, automated intelligence-gathering and lead-scouting platform. Engineered to eliminate manual research overhead, the system integrates advanced search heuristics, distributed web extraction, and generative AI schema parsing to organize unstructured web data into a deterministic, real-time matrix dashboard.
 
+### 🖼️ System Previews
+<div align="center">
+  <img src="frontend/screenshots/QA1.png" width="45%" alt="AuraScout QA1 Output" />
+  <img src="frontend/screenshots/QA2.png" width="45%" alt="AuraScout QA2 Output" />
+</div>
+
+## ✨ Key Features
+- **BYOK (Bring Your Own Key)**: API credentials are saved locally in the browser (`localStorage`) for ultimate privacy.
+- **Dynamic Multi-LLM Routing**: Pivot instantly between **Google Gemini**, **Groq** (Llama 3.x), and **OpenRouter** endpoints if rate limits are exhausted, bypassing SDK bloat via direct REST HTTPX calls.
+- **Local Persistence Layer**: A fully integrated, thread-safe SQLite database (`leads.db`) stores extracted intelligence locally.
+- **Auto-Formatting CSV Exports**: Extracted multi-badge matrices automatically serialize into clean CSV columns.
+
 ## 🚀 Architecture and Core Modules
 
 The architecture is strictly modularized to enforce separation of concerns between data extraction, AI parsing, and user interface rendering.
